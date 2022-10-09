@@ -38,44 +38,7 @@ namespace FundooNoteApplications.Controllers
                     throw;
                 }
             }
-        [HttpPost("login")]
-        public IActionResult LoginUser(LoginModel loginModel)
-        {
-            try
-            {
-                var userdata = userBL.LoginUser(loginModel);
-                if (userdata != null)
-                {
-                    return this.Ok(new { success = true, message = userdata });
-                }
-                return this.BadRequest(new { success = false, message = $"Email And PassWord Is Invalid" });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        [Authorize]
-        [HttpPost("ForgetPassword")]
-        public IActionResult ForgetPassword(string emailId)
-        {
-            try
-            {
-                var result = userBL.ForgetPassword(emailId);
-                if (result != null)
-                {
-                    return this.Ok(new { Sucess = true, message = "email sends successfully" });
-                }
-                else
-                {
-                    return this.BadRequest(new { Success = false, message = "email doesnot send successfully" });
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
+       
         
 
     }
