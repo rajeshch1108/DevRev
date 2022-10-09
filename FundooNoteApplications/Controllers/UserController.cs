@@ -38,8 +38,25 @@ namespace FundooNoteApplications.Controllers
                     throw;
                 }
             }
-       
-        
+        [HttpPost("login")]
+        public IActionResult LoginUser(LoginModel loginModel)
+        {
+            try
+            {
+                var userdata = userBL.LoginUser(loginModel);
+                if (userdata != null)
+                {
+                    return this.Ok(new { success = true, message = userdata });
+                }
+                return this.BadRequest(new { success = false, message = $"Email And PassWord Is Invalid" });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+      
+
 
     }
     }

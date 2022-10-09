@@ -69,6 +69,23 @@ namespace RepositoryLayer.Service
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        public string LoginUser(LoginModel loginModel)
+        {
+            try
+            {
+                var result = fundooContext.userTable.Where(u => u.Email == loginModel.Email && u.Password == loginModel.Password).FirstOrDefault();
+                if (result != null)
+                {
+                    return GetJWTToken(loginModel.Email, result.userID);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
 
