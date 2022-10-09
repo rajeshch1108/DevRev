@@ -76,7 +76,31 @@ namespace FundooNoteApplications.Controllers
                 throw e;
             }
         }
+        
+        [HttpPut]
+        [Route("ResetPassword")]
+        public ActionResult ResetPassword(string Password, string ConfirmPassword)
+        {
+            try
+            {
+                var Email = User.FindFirst(ClaimTypes.Email).Value.ToString();
 
+                if (userBL.ResetPassword(Password, ConfirmPassword))
+                {
+                    return Ok(new { success = true, message = "Reset Password is Succesfull" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Reset Password Link Could Not Be Sent" });
+                }
+
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
 
     }
     }

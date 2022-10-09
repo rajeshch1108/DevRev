@@ -108,6 +108,28 @@ namespace RepositoryLayer.Service
                 throw e;
             }
         }
+        public bool ResetPassword(string Password, string ConfirmPassword)
+        {
+            try
+            {
+                if (Password.Equals(ConfirmPassword))
+                {
+                    var emailCheck = fundooContext.userTable.FirstOrDefault();
+                    emailCheck.Password = Password;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
 
