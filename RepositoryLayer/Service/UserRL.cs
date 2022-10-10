@@ -76,7 +76,7 @@ namespace RepositoryLayer.Service
                 var result = fundooContext.userTable.Where(u => u.Email == loginModel.Email && u.Password == loginModel.Password).FirstOrDefault();
                 if (result != null)
                 {
-                    return GetJWTToken(loginModel.Email, result.userID);
+                    return GetJWTToken(loginModel.Email, result.userId);
                 }
                 return null;
             }
@@ -93,7 +93,7 @@ namespace RepositoryLayer.Service
                 var emailCheck = fundooContext.userTable.FirstOrDefault(e => e.Email == emailId);
                 if (emailCheck != null)
                 {
-                    var token = GetJWTToken(emailCheck.Email, emailCheck.userID);
+                    var token = GetJWTToken(emailCheck.Email, emailCheck.userId);
                     MSMQModel mSMQModel = new MSMQModel();
                     mSMQModel.sendData2Queue(token);
                     return token.ToString();
