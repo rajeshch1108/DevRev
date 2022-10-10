@@ -49,7 +49,7 @@ namespace FundooNoteApplications.Controllers
         {
             try
             {
-                long userId = long.Parse(User.FindFirst("userId").Value.ToString());
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
                 var result = this.noteBL.GetNote(userId);
                 if (result != null)
                 {
@@ -64,6 +64,52 @@ namespace FundooNoteApplications.Controllers
             {
 
                 throw ex;
+            }
+        }
+        [HttpPut("UpdateNote")]
+        public IActionResult UpdateNote(long noteId, Notes note)
+        {
+            try
+            {
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+
+                var result = noteBL.UpdateNote(userId, noteId, note);
+                if (result)
+                {
+                    return this.Ok(new { success = true, message = "Note updated Successfully" });
+                }
+                else
+                {
+                    return this.BadRequest(new { success = false, message = "Unable to update note" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        [HttpPut("DeleteNote")]
+        public IActionResult DeleteNote(long noteId)
+        {
+            try
+            {
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+                var result =noteBL.DeleteNote(noteId);
+                if (result)
+                {
+                    return this.Ok(new { success = true, message = "note Deleted Successfully" });
+
+                }
+                else
+                {
+                    return this.BadRequest(new { success = false, message = "unable to Delete Note" });
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

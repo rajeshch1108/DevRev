@@ -40,6 +40,29 @@ namespace BusinessLayer.Service
                 throw ex;
             }
         }
+        public bool UpdateNote(long userId, long noteId, Notes note)
+        {
+            try
+            {
+                return this.noteRL.UpdateNote(userId, noteId, note);
+            }
+            catch (Exception ex)
+            {
 
+                throw ex;
+            }
+        }
+        public bool DeleteNote(long noteId)
+        {
+            try
+            {
+                return this.noteRL.DeleteNote(noteId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

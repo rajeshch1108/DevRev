@@ -63,5 +63,63 @@ namespace RepositoryLayer.Service
                 throw ex;
             }
         }
+        public bool UpdateNote(long userId, long noteId, Notes note)
+        {
+            try
+            {
+                var result = fundooContext.NoteTable.Where(note => note.userId == userId && note.NoteId == noteId).FirstOrDefault();
+                if (result != null)
+                {
+                    result.Title = note.Title;
+                    result.Description = note.Description;
+                    result.Reminder = note.Reminder;
+                    result.Colour = note.Colour;
+                    result.Image = note.Image;
+                    result.Created = note.Created;
+                    result.Edited = note.Edited;
+
+                    fundooContext.NoteTable.Update(result);
+                    var update = fundooContext.SaveChanges();
+                    if (update > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public bool DeleteNote(long noteId)
+        {
+            try
+            {
+                var noteCheck = fundooContext.NoteTable.Where(x => x.NoteId == noteId).FirstOrDefault();
+                this.fundooContext.NoteTable.Remove(noteCheck);
+                int result = this.fundooContext.SaveChanges();
+                if (result != 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
