@@ -89,8 +89,8 @@ namespace FundooNoteApplications.Controllers
                 throw ex;
             }
         }
-        [HttpPut("DeleteNote")]
-        public IActionResult DeleteNote(long noteId)
+        [HttpDelete("DeleteNote")]
+        public IActionResult DeleteNotesofuser(long noteId)
         {
             try
             {
