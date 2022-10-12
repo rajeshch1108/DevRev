@@ -1,10 +1,14 @@
-﻿using CommonLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 
 namespace RepositoryLayer.Service
@@ -32,7 +36,7 @@ namespace RepositoryLayer.Service
                 noteEntity.Trash = createNote.Trash;
                 noteEntity.Created = createNote.Created;
                 noteEntity.Edited = createNote.Edited;
-                noteEntity.userId = result.userId;
+                noteEntity.userID = result.userId;
 
                 fundooContext.NoteTable.Add(noteEntity);
                 int update = fundooContext.SaveChanges();
@@ -54,7 +58,7 @@ namespace RepositoryLayer.Service
         {
             try
             {
-                var result = fundooContext.NoteTable.Where(note => note.userId == userId).ToList();
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId).ToList();
                 return result;
             }
             catch (Exception ex)
@@ -67,7 +71,7 @@ namespace RepositoryLayer.Service
         {
             try
             {
-                var result = fundooContext.NoteTable.Where(note => note.userId == userId && note.NoteId == noteId).FirstOrDefault();
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();
                 if (result != null)
                 {
                     result.Title = note.Title;
@@ -99,15 +103,15 @@ namespace RepositoryLayer.Service
                 throw ex;
             }
         }
-        public bool DeleteNote(long noteId)
+        public bool DeleteNote(long noteId, long userId)
         {
             try
             {
-                var noteCheck = fundooContext.NoteTable.Where(x => x.NoteId == noteId).FirstOrDefault();
-                this.fundooContext.NoteTable.Remove(noteCheck);
-                int result = this.fundooContext.SaveChanges();
-                if (result != 0)
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();
+                if (result != null)
                 {
+                    fundooContext.NoteTable.Remove(result);
+                    this.fundooContext.SaveChanges();
                     return true;
                 }
                 else
@@ -119,6 +123,136 @@ namespace RepositoryLayer.Service
             {
 
                 throw;
+            }
+        }
+        public NoteEntity PinnedNote(long noteId, long userId)
+        {
+            try
+            {
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();           
+                if (result.Pinned == true)
+                {
+                    result.Pinned = false;
+                    fundooContext.SaveChanges();
+                    return result;
+                }
+                else
+                {
+                    result.Pinned = true;
+                    fundooContext.SaveChanges();
+                    return null;
+                }
+            }
+            catch (System.Exception )
+            {
+                throw ;
+            }
+        }
+        public NoteEntity Archive(long userId, long noteId)
+        {
+            try
+            {
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();
+                if (result.Archive == true)
+                {
+                    result.Archive = false;
+                    fundooContext.SaveChanges();
+                    return null;
+                }
+                else
+                {
+                    result.Archive = true;
+                    fundooContext.SaveChanges();
+                    return result;
+                    
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool TrashNote(long noteId,long userId)
+        {
+            try
+            {
+                var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();
+                if (result.Trash == true)
+                {
+                    result.Pinned = false;
+                    fundooContext.SaveChanges();
+                    return false;
+                }
+                else
+                {
+                    result.Trash = true;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+            }
+            catch (System.Exception )
+            {
+                throw ;
+            }
+
+        }
+         
+           public bool NoteColour(long noteId, string colour)
+              {
+                try
+              {
+               // var result = fundooContext.NoteTable.Where(note => note.userID == userId && note.NoteId == noteId).FirstOrDefault();
+                var result = fundooContext.NoteTable.Where(note => note.NoteId == noteId).FirstOrDefault();
+                if (result.Colour != colour)
+                {
+                    result.Colour = colour;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public NoteEntity Image(long noteId, IFormFile file)
+        {
+            try
+            {
+                var result = this.fundooContext.NoteTable.Where(note => note.NoteId == noteId).FirstOrDefault();
+                if (result != null)
+                {
+                    Account account = new Account(
+                        "dtncu62va",
+                        "685349467117391",
+                        "HDuB4fqd5bO28Aq5-cffWz5bcZ8");
+
+                    Cloudinary cloudinary = new Cloudinary(account);
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, file.OpenReadStream()),
+                    };
+                    var upload = cloudinary.Upload(uploadParams);
+                    string filePath = upload.Url.ToString();
+                    result.Image = filePath;
+                    fundooContext.SaveChanges();
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
     }
