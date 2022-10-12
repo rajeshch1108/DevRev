@@ -16,7 +16,7 @@ namespace FundooNoteApplications.Controllers
         {
             this.collabBL = collabBL;
         }
-        [Authorize]
+        
         [HttpPost("AddCollab")]
         public IActionResult Collab(long noteId, string receiver_email)
         {
