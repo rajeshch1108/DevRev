@@ -39,5 +39,18 @@ namespace BusinessLayer.Service
                 throw new Exception(ex.Message);
             }
         }
+        public bool DeleteCollab(long collabId)
+        {
+           try 
+	    {	        
+           return collabRL.DeleteCollab(collabId);
+		
+	    }
+	       catch (Exception ex)
+	    {
+
+	    	throw ex;
+	    }
+       }
     }
 }

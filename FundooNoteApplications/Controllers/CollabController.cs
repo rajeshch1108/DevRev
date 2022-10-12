@@ -39,6 +39,18 @@ namespace FundooNoteApplications.Controllers
                 return this.BadRequest(new { success = false, message = "Fetch operation failed" });
 
         }
-
+        [HttpDelete("DeleteCollaborator")]
+        public IActionResult DeleteCollab(long collabId)
+        {
+            var result = this.collabBL.DeleteCollab(collabId);
+            if (result)
+            {
+                return this.Ok(new { Success = true, message = "Deleted Successfully" });
+            }
+            else
+            {
+                return this.BadRequest(new { success = false, message = "Unable to delete" });
+            }
+        }
     }
 }
