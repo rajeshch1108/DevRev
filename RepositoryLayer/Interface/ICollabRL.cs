@@ -8,5 +8,6 @@ namespace RepositoryLayer.Interface
     public interface ICollabRL
     {
         public CollabEntity AddCollab(long userId, long noteId, string receiver_email);
+        public List<CollabEntity> GetCollab(long userId);
     }
 }

@@ -44,6 +44,18 @@ namespace RepositoryLayer.Service
                 throw new Exception(ex.Message);
             }
         }
+        public List<CollabEntity> GetCollab(long userId)
+        {
+            try
+            {
+                var result = fundooContext.CollabTable.Where(u => u.Sender_UserId == userId).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
     }
 }

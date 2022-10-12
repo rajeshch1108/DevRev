@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interface;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +22,17 @@ namespace BusinessLayer.Service
             try
             {
                 return collabRL.AddCollab(userId, noteId, receiver_email);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public List<CollabEntity> GetCollab(long userId)
+        {
+            try
+            {
+                return collabRL.GetCollab(userId);
             }
             catch (Exception ex)
             {
