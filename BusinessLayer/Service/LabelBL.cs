@@ -50,16 +50,6 @@ namespace BusinessLayer.Service
                 throw new Exception(ex.Message);
             }
         }
-        public bool DeleteLabel(string labelName)
-        {
-            try
-            {
-                return this.labelRL.DeleteLabel(labelName);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+    
     }
 }
