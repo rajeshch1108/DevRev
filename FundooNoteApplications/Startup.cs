@@ -45,6 +45,8 @@ namespace FundooNoteApplications
             services.AddTransient<INoteBL, NoteBL>();
             services.AddTransient<ICollabRL, CollabRL>();
             services.AddTransient<ICollabBL, CollabBL>();
+            services.AddTransient<ILabelBL, LabelBL>();
+            services.AddTransient<ILabelRL, LabelRL>();
 
             services.AddSwaggerGen(setup =>
             {
@@ -87,7 +89,11 @@ namespace FundooNoteApplications
                     ValidateAudience = false
                 };
             });
-
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+            });
+            services.AddMemoryCache();
         }
   
 

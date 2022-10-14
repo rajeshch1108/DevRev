@@ -3,9 +3,17 @@ using CommonLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using RepositoryLayer.Context;
+using RepositoryLayer.Entity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FundooNoteApplications.Controllers
 {
@@ -15,11 +23,15 @@ namespace FundooNoteApplications.Controllers
     {
         private readonly INoteBL noteBL;
         private readonly FundooContext fundoocontext;
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
 
-        public NoteController(INoteBL notesBL, FundooContext fundoocontext)
+        public NoteController(INoteBL notesBL, FundooContext fundoocontext, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.noteBL = notesBL;
             this.fundoocontext = fundoocontext;
+            this.memoryCache = memoryCache; 
+            this.distributedCache = distributedCache;   
         }
         
         [HttpPost]
@@ -226,5 +238,31 @@ namespace FundooNoteApplications.Controllers
             }
 
         }
+        [Authorize]
+        [HttpGet("redis")]
+        public async Task<IActionResult> GetAllNoteUsingRedisCache()
+        {
+            var cacheKey = "NoteList";
+            string serializedNoteList;
+            var notesList = new List<NoteEntity>();
+            var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            if (redisNotesList != null)
+            {
+                serializedNoteList = Encoding.UTF8.GetString(redisNotesList);
+                notesList = JsonConvert.DeserializeObject<List<NoteEntity>>(serializedNoteList);
+            }
+            else
+            {
+                notesList = await fundoocontext.NoteTable.ToListAsync();
+                serializedNoteList = JsonConvert.SerializeObject(notesList);
+                redisNotesList = Encoding.UTF8.GetBytes(serializedNoteList);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await distributedCache.SetAsync(cacheKey, redisNotesList, options);
+            }
+            return Ok(notesList);
+        }
+
     }
 }
