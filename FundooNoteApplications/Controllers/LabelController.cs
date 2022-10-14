@@ -101,7 +101,7 @@ namespace FundooNoteApplications.Controllers
             }
         }
         [Authorize]
-        [HttpGet("redis")]
+        [HttpGet("Redis")]
         public async Task<IActionResult> GetAllLabelUsingRedisCache()
         {
             var cacheKey = "LabelList";

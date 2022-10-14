@@ -239,7 +239,7 @@ namespace FundooNoteApplications.Controllers
 
         }
         [Authorize]
-        [HttpGet("redis")]
+        [HttpGet("Redis")]
         public async Task<IActionResult> GetAllNoteUsingRedisCache()
         {
             var cacheKey = "NoteList";
