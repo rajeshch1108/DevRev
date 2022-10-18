@@ -119,13 +119,13 @@ namespace FundooNoteApplications.Controllers
             var redisCollabList = await distributedCache.GetAsync(cacheKey);
             if (redisCollabList != null)
             {
-                _logger.LogInformation("retrive Collab Successfull");
+                _logger.LogInformation("Retrive Collab Successfull");
                 serializedCollabList = Encoding.UTF8.GetString(redisCollabList);
                 collabList = JsonConvert.DeserializeObject<List<CollabEntity>>(serializedCollabList);
             }
             else
             {
-                _logger.LogInformation("retrive Collab unSuccessfull");
+                _logger.LogInformation("Retrive Collab unSuccessfull");
                 collabList = await fundoocontext.CollabTable.ToListAsync();
                 serializedCollabList = JsonConvert.SerializeObject(collabList);
                 redisCollabList = Encoding.UTF8.GetBytes(serializedCollabList);

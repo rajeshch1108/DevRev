@@ -278,13 +278,13 @@ namespace FundooNoteApplications.Controllers
             var redisNotesList = await distributedCache.GetAsync(cacheKey);
             if (redisNotesList != null)
             {
-                _logger.LogInformation("retrive note Successfull");
+                _logger.LogInformation("Retrive note Successfull");
                 serializedNoteList = Encoding.UTF8.GetString(redisNotesList);
                 notesList = JsonConvert.DeserializeObject<List<NoteEntity>>(serializedNoteList);
             }
             else
             {
-                _logger.LogInformation("retrive note unSuccessfull");
+                _logger.LogInformation("Retrive note unSuccessfull");
                 notesList = await fundoocontext.NoteTable.ToListAsync();
                 serializedNoteList = JsonConvert.SerializeObject(notesList);
                 redisNotesList = Encoding.UTF8.GetBytes(serializedNoteList);
