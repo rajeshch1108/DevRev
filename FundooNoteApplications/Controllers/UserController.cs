@@ -4,7 +4,9 @@ using CommonLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace FundooNoteApplications.Controllers
@@ -14,9 +16,11 @@ namespace FundooNoteApplications.Controllers
         public class UserController : ControllerBase
         {
             private readonly IUserBL userBL;
-            public UserController(IUserBL userBL)
+            private readonly ILogger<UserController> _logger;
+        public UserController(IUserBL userBL, ILogger<UserController> _logger)
             {
                 this.userBL = userBL;
+                this._logger = _logger;
             }
             [HttpPost("Register")]//Custom route
             public IActionResult UserRegistration(Registration Registration)
@@ -26,16 +30,20 @@ namespace FundooNoteApplications.Controllers
                     var result = userBL.UserRegistration(Registration);
                     if (result != null)
                     {
-                        return this.Ok(new { success = true, message = "UserRegistration Successfull", data = result });
+                    _logger.LogInformation("UserRegistration Successfull");
+                    return this.Ok(new { success = true, message = "UserRegistration Successfull", data = result });
                     }
                     else
                     {
-                        return this.BadRequest(new { success = true, message = "UserRegistration UnSuccessfull" });
+                    _logger.LogInformation("UserRegistration UnSuccessfull");
+
+                    return this.BadRequest(new { success = true, message = "UserRegistration UnSuccessfull" });
                     }
                 }
-                catch (Exception)
+                catch (Exception  ex)
                 {
-                    throw;
+                _logger.LogError(ex.Message);
+                    throw ex ;
                 }
             }
         [HttpPost("login")]
@@ -46,12 +54,18 @@ namespace FundooNoteApplications.Controllers
                 var userdata = userBL.LoginUser(loginModel);
                 if (userdata != null)
                 {
-                    return this.Ok(new { success = true, message = userdata });
+                    _logger.LogInformation("Email And PassWord Is Valid ");
+                    return this.Ok(new { success = true, message = "Email And PassWord Is Valid" });
                 }
-                return this.BadRequest(new { success = false, message = $"Email And PassWord Is Invalid" });
+                else
+                {
+                    _logger.LogInformation("Email And PassWord Is Invalid");
+                    return this.BadRequest(new { success = false, message = $"Email And PassWord Is Invalid" });
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 throw ex;
             }
         }
@@ -64,16 +78,19 @@ namespace FundooNoteApplications.Controllers
                 var result = userBL.ForgetPassword(emailId);
                 if (result != null)
                 {
-                    return this.Ok(new { Sucess = true, message = "email sends successfully" });
+                    _logger.LogInformation("Email sends successfully ");
+                    return this.Ok(new { Sucess = true, message = "Email sends successfully" });
                 }
                 else
                 {
-                    return this.BadRequest(new { Success = false, message = "email doesnot send successfully" });
+                    _logger.LogInformation("Email doesnot sends successfully ");
+                    return this.BadRequest(new { Success = false, message = "Email doesnot send successfully" });
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                _logger.LogError(ex.Message);
+                throw ex;
             }
         }
         
@@ -87,18 +104,20 @@ namespace FundooNoteApplications.Controllers
 
                 if (userBL.ResetPassword(Password, ConfirmPassword))
                 {
+                    _logger.LogInformation("Reset Password is Succesfull ");
                     return Ok(new { success = true, message = "Reset Password is Succesfull" });
                 }
                 else
                 {
+                    _logger.LogInformation("Reset Password Link Could Not Be Sent ");
                     return BadRequest(new { success = false, message = "Reset Password Link Could Not Be Sent" });
                 }
 
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _logger.LogError(ex.Message);
+                throw ex;
             }
         }
 

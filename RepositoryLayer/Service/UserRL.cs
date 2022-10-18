@@ -1,4 +1,5 @@
 ﻿using CommonLayer.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Context;
@@ -10,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 
 namespace RepositoryLayer.Service
 {
@@ -31,7 +33,7 @@ namespace RepositoryLayer.Service
                 userEntity.FirstName = registration.FirstName;
                 userEntity.LastName = registration.LastName;
                 userEntity.Email = registration.Email;
-                userEntity.Password = registration.Password;
+                userEntity.Password = Encrypt(registration .Password);
                 fundooContext.userTable.Add(userEntity);
                 int result = fundooContext.SaveChanges();
                 if (result > 0)
@@ -129,6 +131,21 @@ namespace RepositoryLayer.Service
 
                 throw;
             }
+        }
+        public string Encrypt(string password)
+        {
+            if (string.IsNullOrEmpty(password)) return "";
+            password += "";
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            return Convert.ToBase64String(passwordBytes);
+        }
+        public string Decrypt(string base64EncodeData)
+        {
+            if (string.IsNullOrEmpty(base64EncodeData)) return "";
+            var base64EncoddeBytes = Convert.FromBase64String(base64EncodeData);
+            var result = Encoding.UTF8.GetString(base64EncoddeBytes);
+            result = result.Substring(0, result.Length );
+            return result;  
         }
     }
 }
