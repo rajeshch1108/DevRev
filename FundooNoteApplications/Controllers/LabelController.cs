@@ -150,13 +150,13 @@ namespace FundooNoteApplications.Controllers
                 var redisLabelList = await distributedCache.GetAsync(cacheKey);
                 if (redisLabelList != null)
                 {
-                    _logger.LogInformation("retrive label Successfull");
+                    _logger.LogInformation("Retrive label Successfull");
                     serializedLabelList = Encoding.UTF8.GetString(redisLabelList);
                     labelList = JsonConvert.DeserializeObject<List<LabelEntity>>(serializedLabelList);
                 }
                 else
                 {
-                    _logger.LogInformation("retrive label  unSuccessfull");
+                    _logger.LogInformation("Retrive label  unSuccessfull");
                     labelList = await fundoocontext.LabelTable.ToListAsync();
                     serializedLabelList = JsonConvert.SerializeObject(labelList);
                     redisLabelList = Encoding.UTF8.GetBytes(serializedLabelList);
